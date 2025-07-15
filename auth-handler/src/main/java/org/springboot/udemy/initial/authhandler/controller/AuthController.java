@@ -3,6 +3,7 @@ package org.springboot.udemy.initial.authhandler.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springboot.udemy.initial.authhandler.enums.AppRoleCategory;
+import org.springboot.udemy.initial.authhandler.enums.AuthProvider;
 import org.springboot.udemy.initial.authhandler.model.Role;
 import org.springboot.udemy.initial.authhandler.model.User;
 import org.springboot.udemy.initial.authhandler.repository.RoleRepository;
@@ -14,8 +15,7 @@ import org.springboot.udemy.initial.authhandler.response.UserInfoResponse;
 import org.springboot.udemy.initial.authhandler.security.JwtUtil;
 import org.springboot.udemy.initial.authhandler.springUser.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -95,6 +95,9 @@ public class AuthController {
         User user = new User(signupRequest.getUsername(),
                 signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword()));
+
+        // Explicitly set provider
+        user.setAuthProvider(AuthProvider.LOCAL);
 
         Set<String> rolesSet = signupRequest.getRole();
         Set<Role> roles = new HashSet<>();

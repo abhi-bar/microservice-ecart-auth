@@ -1,11 +1,16 @@
 package org.springboot.udemy.initial.authhandler.config;
 
+import jakarta.annotation.PostConstruct;
 import org.springboot.udemy.initial.authhandler.enums.AppRoleCategory;
+import org.springboot.udemy.initial.authhandler.enums.AuthProvider;
 import org.springboot.udemy.initial.authhandler.model.Role;
 import org.springboot.udemy.initial.authhandler.model.User;
+import org.springboot.udemy.initial.authhandler.oath2.CustomOAuth2UserService;
+import org.springboot.udemy.initial.authhandler.oath2.OAuth2AuthenticationSuccessHandler;
 import org.springboot.udemy.initial.authhandler.repository.RoleRepository;
 import org.springboot.udemy.initial.authhandler.repository.UserRepository;
 import org.springboot.udemy.initial.authhandler.security.AuthEntryPointJwt;
+import org.springboot.udemy.initial.authhandler.security.JwtUtil;
 import org.springboot.udemy.initial.authhandler.springUser.service.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +26,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Set;
 
@@ -34,10 +38,28 @@ public class WebSecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Bean
+    public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return new OAuth2AuthenticationSuccessHandler(userRepository, roleRepository, jwtUtil);
+    }
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Autowired
     UserDetailServiceImpl userDetailService;
@@ -62,7 +84,13 @@ public class WebSecurityConfig {
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .formLogin(AbstractHttpConfigurer::disable);;
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)   // <--- This is important
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler())
+                )
+                .formLogin(AbstractHttpConfigurer::disable);
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
         httpSecurity.headers(headers -> headers.frameOptions(
                 frameOptions -> frameOptions.sameOrigin()));
@@ -101,16 +129,19 @@ public class WebSecurityConfig {
             // Create users if not already present
             if (!userRepository.existsUserByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
+                user1.setAuthProvider(AuthProvider.LOCAL);
                 userRepository.save(user1);
             }
 
             if (!userRepository.existsUserByUserName("seller1")) {
                 User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("password2"));
+                seller1.setAuthProvider(AuthProvider.LOCAL);
                 userRepository.save(seller1);
             }
 
             if (!userRepository.existsUserByUserName("admin")) {
                 User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+                admin.setAuthProvider(AuthProvider.LOCAL);
                 userRepository.save(admin);
             }
 

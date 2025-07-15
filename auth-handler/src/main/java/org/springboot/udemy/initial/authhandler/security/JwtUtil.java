@@ -24,8 +24,6 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${spring.app.jwtSecret}")
-    private String jwtSecret;
 
     @Value("${access-token-expiration-ms}")
     private Integer jwtExpiration;
@@ -36,19 +34,6 @@ public class JwtUtil {
     @Value("${private-key-path}")
     private String privateKeyPath;
 
-//
-////    Generate Jwt
-//    public String generateJWT(UserDetailsImpl userDetails){
-//        return Jwts.builder()
-//                .setSubject(userDetails.getUsername())
-//                .claim("roles",userDetails.getAuthorities().stream()
-//                        .map(Object::toString)
-//                        .toList())
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date((new Date()).getTime()+jwtExpiration))
-//                .signWith(key())
-//                .compact();
-//    }
 
     //    Generate Jwt
     public String generateJWT(UserDetailsImpl user) throws Exception {
@@ -90,8 +75,5 @@ public class JwtUtil {
         }
     }
 
-    private Key key(){
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-    }
 
 }

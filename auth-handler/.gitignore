@@ -35,3 +35,9 @@ build/
 ### Key Locations ###
 /Users/abinash/Desktop/EmbarkX/microservice-ecommerce/auth-handler/src/main/resources/rsa/private.pem
 /Users/abinash/Desktop/EmbarkX/microservice-ecommerce/auth-handler/src/main/resources/rsa/public.pem
+
+### Env File ###
+/Users/abinash/Desktop/EmbarkX/microservice-ecommerce/auth-handler/src/main/resources/env.properties
+.env
+src/main/resources/env.properties
+env.properties
