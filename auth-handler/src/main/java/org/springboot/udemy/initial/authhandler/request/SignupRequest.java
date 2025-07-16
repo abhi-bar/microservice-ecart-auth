@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.util.Set;
 
@@ -19,6 +20,7 @@ public class SignupRequest {
     @Email(message = "Needs to be a valid email")
     private String email;
 
+    @JsonIgnore
     private Set<String> role;
 
     @NotBlank
