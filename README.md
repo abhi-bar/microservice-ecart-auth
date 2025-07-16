@@ -1,4 +1,4 @@
-# 🛡️ Auth Handler Microservice for E-Commerce
+# 🛡️ Auth Handler Microservice 
 
 This project is a **production-ready authentication microservice** for modern web applications — built using **Spring Boot**, **JWT with RSA**, **OAuth2 login (Google & GitHub)**, and a **React frontend**.
 
