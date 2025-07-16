@@ -92,10 +92,14 @@ React UI
 
 
 ###7. Here are the demo of the pages 
+
+
 <img width="358" height="272" alt="Screenshot 2025-07-16 at 10 06 04 PM" src="https://github.com/user-attachments/assets/9e48a655-9ddf-4604-b11a-d4179f4843e5" />
 
 <img width="421" height="326" alt="Screenshot 2025-07-16 at 10 06 27 PM" src="https://github.com/user-attachments/assets/fdfd64cc-048f-4e7b-911e-2309c3b5f6d7" />
+
 <img width="824" height="443" alt="Screenshot 2025-07-16 at 10 07 14 PM" src="https://github.com/user-attachments/assets/477af02c-44a3-40e7-b7a8-d5100d981119" />
+
 <img width="448" height="624" alt="Screenshot 2025-07-16 at 10 07 29 PM" src="https://github.com/user-attachments/assets/76779f82-4085-481b-9993-92c9592c58bb" />
 
 
