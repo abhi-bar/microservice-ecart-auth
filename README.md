@@ -15,7 +15,6 @@ Designed to be scalable, secure, and easy to integrate into microservice-based a
 ✅ Custom `OAuth2UserService` and `OAuth2SuccessHandler`  
 ✅ CORS, CSRF protection, and stateless session setup  
 ✅ Custom refresh token logic out of the box for more robust day-to-day uses
-
 ✅ Use of Kafka for event-based User details transfer in case of expernal services
 ✅ React frontend with 3 login options:  
   🔹 Google  
