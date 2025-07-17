@@ -95,6 +95,8 @@ React UI
 ###7. Here are the demo of the pages 
 
 Homepage
+
+
 <img width="358" height="272" alt="Screenshot 2025-07-16 at 10 06 04 PM" src="https://github.com/user-attachments/assets/9e48a655-9ddf-4604-b11a-d4179f4843e5" />
 
 <img width="421" height="326" alt="Screenshot 2025-07-16 at 10 06 27 PM" src="https://github.com/user-attachments/assets/fdfd64cc-048f-4e7b-911e-2309c3b5f6d7" />
@@ -103,7 +105,10 @@ Homepage
 
 <img width="448" height="624" alt="Screenshot 2025-07-16 at 10 07 29 PM" src="https://github.com/user-attachments/assets/76779f82-4085-481b-9993-92c9592c58bb" />
 
+
 Kafka Message after user registration 
+
+
 <img width="640" height="185" alt="Screenshot 2025-07-18 at 12 59 14 AM" src="https://github.com/user-attachments/assets/b8afe277-81d5-41c8-8f86-e9a1c6bec70f" />
 <img width="646" height="180" alt="Screenshot 2025-07-18 at 12 59 40 AM" src="https://github.com/user-attachments/assets/4e889ad9-88f3-43e4-a234-bc4f6413ac44" />
 
