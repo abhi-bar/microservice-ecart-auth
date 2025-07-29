@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springboot.udemy.initial.authhandler.enums.AppRoleCategory;
 import org.springboot.udemy.initial.authhandler.enums.AuthProvider;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.KafkaProducerService;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.UserCreatedEvent;
 import org.springboot.udemy.initial.authhandler.model.Role;
 import org.springboot.udemy.initial.authhandler.model.User;
 import org.springboot.udemy.initial.authhandler.repository.RoleRepository;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -32,6 +35,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    KafkaProducerService kafkaProducerService;
 
     private static final Logger log = LoggerFactory.getLogger(CustomOAuth2UserService.class);
 
@@ -85,6 +91,25 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 });
 
         log.info("User in DB after lookup/save: {}", savedUser.getEmail());
+
+//      Setup for Kafka
+        Set<String> roleNames = savedUser.getRoles().stream()
+                .map(role -> role.getAppRoleCategory().name())
+                .collect(Collectors.toSet());
+
+
+//        Config for Kafka
+        UserCreatedEvent event = new UserCreatedEvent(
+                savedUser.getUserId().toString(),
+                savedUser.getUserName(),
+                savedUser.getEmail(),
+                roleNames,
+                savedUser.getAuthProvider().name()
+        );
+
+        log.info(event.getUsername());
+
+//        kafkaProducerService.publishUserCreatedEvent(event);
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("ROLE_USER")),

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springboot.udemy.initial.authhandler.enums.AppRoleCategory;
 import org.springboot.udemy.initial.authhandler.enums.AuthProvider;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.KafkaProducerService;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.UserCreatedEvent;
 import org.springboot.udemy.initial.authhandler.model.Role;
 import org.springboot.udemy.initial.authhandler.model.User;
 import org.springboot.udemy.initial.authhandler.repository.RoleRepository;
@@ -49,6 +51,9 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    KafkaProducerService kafkaProducerService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) throws Exception {
@@ -131,6 +136,24 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
+
+        Set<String> roleNames = user.getRoles().stream()
+                .map(role -> role.getAppRoleCategory().name())
+                .collect(Collectors.toSet());
+
+
+//        Config for Kafka
+        UserCreatedEvent event = new UserCreatedEvent(
+                user.getUserId().toString(),
+                user.getUserName(),
+                user.getEmail(),
+                roleNames,
+                user.getAuthProvider().name()
+        );
+
+        log.info(event.getUsername());
+
+        kafkaProducerService.publishUserCreatedEvent(event);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

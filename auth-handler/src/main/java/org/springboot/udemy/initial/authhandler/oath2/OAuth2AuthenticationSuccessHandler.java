@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springboot.udemy.initial.authhandler.enums.AppRoleCategory;
 import org.springboot.udemy.initial.authhandler.enums.AuthProvider;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.KafkaProducerService;
+import org.springboot.udemy.initial.authhandler.kafkaConfig.UserCreatedEvent;
+import org.springboot.udemy.initial.authhandler.model.Role;
 import org.springboot.udemy.initial.authhandler.model.User;
 import org.springboot.udemy.initial.authhandler.repository.RoleRepository;
 import org.springboot.udemy.initial.authhandler.repository.UserRepository;
@@ -19,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -34,6 +39,9 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    KafkaProducerService kafkaProducerService;
 
     public OAuth2AuthenticationSuccessHandler(UserRepository userRepository, RoleRepository roleRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -63,6 +71,24 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> registerNewUser(email, name, provider));
 
+        Set<String> roleNames = user.getRoles().stream()
+                .map(role -> role.getAppRoleCategory().name())
+                .collect(Collectors.toSet());
+
+
+//        Config for Kafka
+        UserCreatedEvent event = new UserCreatedEvent(
+                user.getUserId().toString(),
+                user.getUserName(),
+                user.getEmail(),
+                roleNames,
+                user.getAuthProvider().name()
+        );
+
+        log.info(event.getUsername());
+
+        kafkaProducerService.publishUserCreatedEvent(event);
+
         // Generate JWT for the user
         String jwt = null;
         try {
@@ -83,8 +109,11 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         newUser.setAuthProvider(provider);
 
         // Assign default ROLE_USER
-        roleRepository.findRoleByAppRoleCategory(AppRoleCategory.ROLE_USER)
+        Role role = roleRepository.findRoleByAppRoleCategory(AppRoleCategory.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Default ROLE_USER not found"));;
+
+        newUser.setRoles(Set.of(role));
+
 
         return userRepository.save(newUser);
     }
