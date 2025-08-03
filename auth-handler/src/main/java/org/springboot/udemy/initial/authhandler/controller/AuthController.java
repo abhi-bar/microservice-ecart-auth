@@ -14,6 +14,7 @@ import org.springboot.udemy.initial.authhandler.request.LoginRequest;
 import org.springboot.udemy.initial.authhandler.request.SignupRequest;
 import org.springboot.udemy.initial.authhandler.response.MessageResponse;
 import org.springboot.udemy.initial.authhandler.response.UserInfoResponse;
+import org.springboot.udemy.initial.authhandler.response.UserInfoSimpleResponse;
 import org.springboot.udemy.initial.authhandler.security.JwtUtil;
 import org.springboot.udemy.initial.authhandler.springUser.model.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +82,10 @@ public class AuthController {
 //        returning empty
         log.info(roles.toString());
 
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(),
-                userDetails.getUsername(),roles,jwtToken);
+//        UserInfoResponse response = new UserInfoResponse(userDetails.getId(),
+//                userDetails.getUsername(),roles,jwtToken);
+
+        UserInfoSimpleResponse response = new UserInfoSimpleResponse(jwtToken);
 
         return ResponseEntity.ok().body(response);
     }

@@ -86,7 +86,7 @@ public class WebSecurityConfig {
                 )
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)   // <--- This is important
+                                .userService(customOAuth2UserService)   // <--- This saves the data
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler())
                 )

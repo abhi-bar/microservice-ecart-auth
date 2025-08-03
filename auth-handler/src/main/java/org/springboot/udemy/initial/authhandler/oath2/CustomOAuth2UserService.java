@@ -109,7 +109,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         log.info(event.getUsername());
 
-//        kafkaProducerService.publishUserCreatedEvent(event);
+
 
         return new DefaultOAuth2User(
                 Set.of(new SimpleGrantedAuthority("ROLE_USER")),

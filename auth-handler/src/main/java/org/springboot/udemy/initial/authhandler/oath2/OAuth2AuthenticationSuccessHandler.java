@@ -98,6 +98,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         response.setContentType("application/json");
+
         response.getWriter().write("{\"token\": \"" + jwt + "\"}");
         response.getWriter().flush();
     }
